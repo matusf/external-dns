@@ -513,6 +513,11 @@ var (
 		Filters: []string{},
 	}
 
+	// Domain filter with disabled `MatchParent` functionality (leading `.`)
+	DomainFilterNoMatchParent = endpoint.DomainFilter{
+		Filters: []string{".example.com"},
+	}
+
 	DomainFilterEmptyClient = &PDNSAPIClient{
 		dryRun:       false,
 		authCtx:      context.WithValue(context.Background(), pgo.ContextAPIKey, pgo.APIKey{Key: "TEST-API-KEY"}),
@@ -546,6 +551,13 @@ var (
 		authCtx:      context.WithValue(context.Background(), pgo.ContextAPIKey, pgo.APIKey{Key: "TEST-API-KEY"}),
 		client:       pgo.NewAPIClient(pgo.NewConfiguration()),
 		domainFilter: DomainFilterChildListMultiple,
+	}
+
+	DomainFilterNoMatchParentClient = &PDNSAPIClient{
+		dryRun:       false,
+		authCtx:      context.WithValue(context.Background(), pgo.ContextAPIKey, pgo.APIKey{Key: "TEST-API-KEY"}),
+		client:       pgo.NewAPIClient(pgo.NewConfiguration()),
+		domainFilter: DomainFilterNoMatchParent,
 	}
 )
 
@@ -1058,6 +1070,10 @@ func (suite *NewPDNSProviderTestSuite) TestPDNSClientPartitionZones() {
 	filteredZones, residualZones = DomainFilterChildMultipleClient.PartitionZones(zoneList)
 	assert.Equal(suite.T(), partitionResultFilteredMultipleFilter, filteredZones)
 	assert.Equal(suite.T(), partitionResultResidualMultipleFilter, residualZones)
+
+	filteredZones, residualZones = DomainFilterNoMatchParentClient.PartitionZones(zoneList)
+	assert.Equal(suite.T(), partitionResultFilteredSingleFilter, filteredZones)
+	assert.Equal(suite.T(), partitionResultResidualSingleFilter, residualZones)
 }
 
 func TestNewPDNSProviderTestSuite(t *testing.T) {
