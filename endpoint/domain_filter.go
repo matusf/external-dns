@@ -108,19 +108,15 @@ func matchFilter(filters []string, domain string, emptyval bool) bool {
 		return emptyval
 	}
 
-	strippedDomain := strings.ToLower(strings.TrimSuffix(domain, "."))
+	strippedDomain := "." + strings.TrimPrefix(strings.ToLower(strings.TrimSuffix(domain, ".")), ".")
 	for _, filter := range filters {
 		if filter == "" {
 			continue
 		}
 
-		if strings.HasPrefix(filter, ".") && strings.HasSuffix(strippedDomain, filter) {
-			return true
-		} else if strings.Count(strippedDomain, ".") == strings.Count(filter, ".") {
-			if strippedDomain == filter {
-				return true
-			}
-		} else if strings.HasSuffix(strippedDomain, "."+filter) {
+		// Ensure filter has one leading dot
+		filter := "." + strings.TrimPrefix(filter, ".")
+		if strings.HasSuffix(strippedDomain, filter) {
 			return true
 		}
 	}

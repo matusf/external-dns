@@ -185,7 +185,7 @@ var domainFilterTests = []domainFilterTest{
 		[]string{".example.org"},
 		[]string{},
 		[]string{"example.org"},
-		false,
+		true,
 		map[string][]string{
 			"include": {".example.org"},
 		},
